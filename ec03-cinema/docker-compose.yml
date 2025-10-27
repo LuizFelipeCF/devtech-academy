@@ -1,0 +1,11 @@
+version: "3.8"
+services:
+  ec03-cinema:
+    build: .
+    image: ec03-cinema:latest
+    container_name: ec03-cinema
+    ports:
+      - "8083:80"
+    volumes:
+      - ./:/usr/share/nginx/html:ro
+    restart: unless-stopped

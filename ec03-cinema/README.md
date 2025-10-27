@@ -1,0 +1,16 @@
+# EC03 - Cinema
+
+Arquivos principais:
+- index.html
+- app.js
+- Dockerfile
+- docker-compose.yml
+
+## Como rodar local com Docker
+```bash
+
+docker build -t ec03-cinema .
+docker compose up --build
+# ou
+docker run -d -p 8083:80 ec03-cinema
+# abra http://localhost:8080

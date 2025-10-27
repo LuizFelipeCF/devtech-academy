@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Cadastro de Filmes</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+  <!-- Menu -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="index.html">Cinema</a>
+      <div class="collapse navbar-collapse">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item"><a class="nav-link active" href="cadastro-filmes.html">Filmes</a></li>
+          <li class="nav-item"><a class="nav-link" href="cadastro-salas.html">Salas</a></li>
+          <li class="nav-item"><a class="nav-link" href="cadastro-sessoes.html">Sessões</a></li>
+          <li class="nav-item"><a class="nav-link" href="sessoes.html">Sessões Disponíveis</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container mt-4">
+    <h2>Cadastro de Filmes</h2>
+    <div id="alert-placeholder"></div>
+
+    <form id="film-form" class="row g-3 needs-validation" novalidate>
+      <div class="col-12">
+        <label class="form-label">Título</label>
+        <input id="titulo" class="form-control" required>
+      </div>
+      <div class="col-12">
+        <label class="form-label">Descrição</label>
+        <textarea id="descricao" class="form-control" rows="3"></textarea>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Gênero</label>
+        <select id="genero" class="form-select" required>
+          <option value="" selected disabled>Escolha...</option>
+          <option>Drama</option><option>Comédia</option><option>Ação</option><option>Romance</option><option>Fantasia</option>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Classificação</label>
+        <select id="classificacao" class="form-select" required>
+          <option value="" selected disabled>Escolha...</option>
+          <option>Livre</option><option>10</option><option>12</option><option>14</option><option>16</option><option>18</option>
+        </select>
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Duração (min)</label>
+        <input id="duracao" type="number" min="1" class="form-control" required>
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Data de Estreia</label>
+        <input id="estreia" type="date" class="form-control" required>
+      </div>
+      <div class="col-12">
+        <button class="btn btn-primary" id="save-film">Salvar Filme</button>
+      </div>
+    </form>
+
+    <hr>
+    <h3>Filmes cadastrados</h3>
+    <ul id="film-list" class="list-group"></ul>
+  </main>
+
+  <script src="cinema.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('film-form');
+      const list = document.getElementById('film-list');
+      const alertPlaceholder = document.getElementById('alert-placeholder');
+
+      const showAlert = (msg, type='success')=>{
+        const div = document.createElement('div');
+        div.className = `alert alert-${type} alert-dismissible`;
+        div.innerHTML = msg + '<button class="btn-close" data-bs-dismiss="alert"></button>';
+        alertPlaceholder.appendChild(div);
+        setTimeout(()=>div.remove(),4000);
+      };
+
+      const render = () => {
+        const filmes = Cinema.getFilmes();
+        list.innerHTML = filmes.length? filmes.map(f => {
+          return `<li class="list-group-item d-flex justify-content-between align-items-start">
+            <div>
+              <strong>${f.titulo}</strong> <small class="text-muted">(${f.genero})</small><br>
+              <small>${f.descricao || ''}</small><br>
+              <small>Classificação: ${f.classificacao} • Duração: ${f.duracao} min • Estreia: ${f.estreia}</small>
+            </div>
+            <div>
+              <button class="btn btn-danger btn-sm ms-2" data-id="${f.id}" data-action="delete">Excluir</button>
+            </div>
+          </li>`;
+        }).join('') : '<li class="list-group-item">Nenhum filme cadastrado.</li>';
+      };
+
+      render();
+
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        if (!form.checkValidity()) {
+          form.classList.add('was-validated');
+          return;
+        }
+        const titulo = document.getElementById('titulo').value.trim();
+        const descricao = document.getElementById('descricao').value.trim();
+        const genero = document.getElementById('genero').value;
+        const classificacao = document.getElementById('classificacao').value;
+        const duracao = document.getElementById('duracao').value;
+        const estreia = document.getElementById('estreia').value;
+
+        const filmes = Cinema.getFilmes();
+        const f = new Cinema.Filme(Cinema.generateId('f_'), titulo, descricao, genero, classificacao, duracao, estreia);
+        filmes.push(f);
+        Cinema.setFilmes(filmes);
+        showAlert('Filme salvo com sucesso!', 'success');
+        form.reset();
+        form.classList.remove('was-validated');
+        render();
+      });
+
+      list.addEventListener('click', (e) => {
+        const btn = e.target.closest('button');
+        if (!btn) return;
+        const id = btn.dataset.id;
+        if (btn.dataset.action === 'delete') {
+          if (confirm('Excluir filme?')) {
+            let filmes = Cinema.getFilmes();
+            filmes = filmes.filter(f => f.id !== id);
+            Cinema.setFilmes(filmes);
+            render();
+          }
+        }
+      });
+    });
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
