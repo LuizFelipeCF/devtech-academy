@@ -1,11 +1,5 @@
 # EC03 - Cinema
 
-Arquivos principais:
-- index.html
-- app.js
-- Dockerfile
-- docker-compose.yml
-
 ## Como rodar local com Docker
 ```bash
 

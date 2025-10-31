@@ -1,17 +1,13 @@
-# EC02 — Sistema de Gestão de Funcionários
+# Gerenciamento de Funcionarios
+Aplicação cliente (página estática) para cadastrar, editar, listar e gerar relatorios de funcionarios
 
-Arquivos principais:
-- index.html
-- app.js
-- Dockerfile
-- docker-compose.yml
+## rodar (local)
 
-## Como rodar local com Docker
 ```bash
-
-docker build -t devtech-academy:local .
-docker run --rm -p 8080:80 devtech-academy:local
-# Abra http://localhost:8080
-
+docker build -t ec02-funcionarios .
 docker compose up --build
-# abra http://localhost:8080
+# ou
+docker run -d -p 8082:80 ec02-funcionarios
+
+
+# abrir http://localhost:8082
